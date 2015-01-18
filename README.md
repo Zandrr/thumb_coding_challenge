@@ -23,7 +23,7 @@ i.e. [{ name: “myupload”, url: ‘http://localhost:8000/thumbs/myupload_thum
 
 ### API
 
-#### GET /thumbs/:filename
+#### GET /thumbs/:filename.pdf
 
 Return a list of .png files with associated name
 
@@ -33,6 +33,9 @@ Return a list of .png files with associated name
     "page_02.png": "http://localhost:8000/page_02.png" 
   }
 ```
+#### GET /thumbs/:filename.png
+
+Return a a single png img that was created via POST request.
 
 #### POST /thumbs/upload/:filename
 
