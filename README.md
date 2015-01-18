@@ -36,7 +36,7 @@ Return a list of .png files with associated name
 
 #### POST /thumbs/upload/:filename
 
-Where :filename is a PDF.  This endpoint will create a new local directory (instead of a database) that contains *n* .png images where *n* is the number of pages in the PDF
+Where :filename is a PDF.  This endpoint will create a new local directory (instead of a database) that contains *n* .png images where *n* is the number of pages in the PDF.  The PDF file must be within this root directory.
 
 
 #### Dependencies
