@@ -12,16 +12,16 @@ if(!module.parent){ //prevent server from starting when testing
 
 server.route({
   method: 'POST',
-  path:   '/thumbs/upload/{filename}', //make this not optional
+  path:   '/thumbs/upload/{filename}', 
   handler: function(req,res){
     var filename = encodeURIComponent(req.params.filename); //set user param to filename
-    var filedir = filename+ '_tmp';
+    var filedir = filename.replace(/\./g,'-'); //replace '.' with '-' to name in db
 
-    exec('mkdir ' + filedir);
-    exec('pdftk '+ filename + ' burst output ' + filedir+'/page_%02d.pdf', function(err,stdout,stderr){
+    exec('mkdir ' + filedir); //make new dir
+    exec('pdftk '+ filename + ' burst output ' + filedir+'/'+filedir+'_%002d.pdf', function(err,stdout,stderr){ //use pdftk to break pdf into pages
       if(err) res("error");
 
-      exec('mogrify -format png '+filedir+'/page*.pdf');
+      exec('mogrify -format png '+filedir+'/'+filedir+'*.pdf'); //turn all pdf pages into png
       res('success');
     });
 
@@ -33,16 +33,25 @@ server.route({
   path:   '/thumbs/{filename}',
   handler: function(req,res){
     var filename = encodeURIComponent(req.params.filename); //set user param to filename
-    var filedir = filename+ '_tmp';
 
     var JSONresponse = {};
+    var filedir = filename.replace(/\./g,'-'); //replace '.' with '-' so that we can access it in db
 
-    fs.readdir('test.pdf_tmp', function(err,file){
-      for(i=0; i<file.length; i++){
-       if( file[i].indexOf(".png") > -1) JSONresponse[file[i]]='http://localhost:8000/thumbs/'+file[i];
-      }
-        res([JSONresponse]);
-    });
+    if(filename.indexOf(".pdf") > -1){
+      fs.readdir(filedir, function(err,file){
+        for(i=0; i<file.length; i++){
+         if( file[i].indexOf(".png") > -1) JSONresponse[file[i]]='http://localhost:8000/thumbs/'+file[i]; //add each png to the JSONresponse object
+        }
+          res([JSONresponse]);
+      });
+    }
+    else if(filename.indexOf(".png") > -1){
+      var filedir = filename.substring(0, filename.indexOf('_'+filename.match(/[0-9]+/))); // remove everything after '_<some int>'
+      res.file('./'+filedir+'/'+filename);
+    }
+    else{
+      res("file name must be either .pdf or .png")
+    }
 
   }
 
