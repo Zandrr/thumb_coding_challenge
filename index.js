@@ -19,7 +19,7 @@ server.route({
 
     exec('mkdir ' + filedir); //make new dir
     exec('pdftk '+ filename + ' burst output ' + filedir+'/'+filedir+'_%002d.pdf', function(err,stdout,stderr){ //use pdftk to break pdf into pages
-      if(err) res("error");
+      if(err) res(err, "error");
 
       exec('mogrify -format png '+filedir+'/'+filedir+'*.pdf'); //turn all pdf pages into png
       res('success');
@@ -42,7 +42,7 @@ server.route({
         for(i=0; i<file.length; i++){
          if( file[i].indexOf(".png") > -1) JSONresponse[file[i]]='http://localhost:8000/thumbs/'+file[i]; //add each png to the JSONresponse object
         }
-          res([JSONresponse]);
+          res(JSONresponse);
       });
     }
     else if(filename.indexOf(".png") > -1){
@@ -56,6 +56,3 @@ server.route({
   }
 
 });
-
-
-//try to use Joi, write tests
