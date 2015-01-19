@@ -46,7 +46,7 @@ server.route({
       });
     }
     else if(filename.indexOf(".png") > -1){
-      var filedir = filename.substring(0, filename.indexOf('_'+filename.match(/[0-9]+/))); // remove everything after '_<some int>'
+      filedir = filename.substring(0, filename.indexOf('_'+filename.match(/[0-9]+/))); // remove everything after '_<some int>'
       res.file('./'+filedir+'/'+filename);
     }
     else{
